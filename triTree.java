@@ -1,111 +1,89 @@
-
-
-
-public class TriTree {
-	public class TriNode {
-		int data ;
-		TriNode left;
-		TriNode right;
-		TriNode mid;
-		TriNode parent;
-		public TriNode(int m){
-			this.data = m;
-			this.left = null;
-			this.right= null;
-			this.mid = null;
-
-		}
-	}
-	TriNode root ;
-	public TriTree(){
-		root = null;
-	}
-	public TriTree(int m ){
-		root = new TriNode(m);
-	}
-	 public TriNode insert(int data, TriNode node) {
-		    if (node == null) {
-		      node = new TriNode(data);
-		    } else if (data < node.data) {
-		      node.left = insert(data, node.left);
-		    } else if (data == node.data) {
-		      node.mid = insert(data, node.mid) ;
-		    } else {
-		      node.right = insert(data, node.right);
-		    }
-		    return node;
-		  }
-	 public void delete(int data, TriNode node) {
-		    if(node == null){
-		    	throw new IllegalArgumentException("node does not exist");
-		    }
-		    if(node.data < data){
-		    	if(node.right == null){
-		    		throw new IllegalArgumentException("value does not exist");
-		    	}else{
-		    		delete(data,node.right);
-		    	}
-		    }else if(node.data > data){
-		    	if(node.left == null){
-		    		throw new IllegalArgumentException("value does not exist");
-		    	}else{
-		    		delete(data,node.left);
-		    	}
-		    }else{
-		    	if(node.mid != null){
-		    		if(isLeaf(node.mid)){
-		    		node.mid = null;
-		    		return ;
-		    		}else{
-		    			delete(data,node.mid);
-		    		}
-		    		
-		    	}else {
-		    		
-		    		if(node.right== null && node.left == null){
-		    			System.out.print(node.data);
-		    			node = null;
-		    			////must change the parent value;
-		    			System.out.print("dsfa");
-		    			
-		    		}else if(node.right == null){
-		    			node = new TriNode(node.left.data);
-		    		}else{
-		    			node = new TriNode(node.left.data);
-		    		}
-		    	}
-		    }
-		  }
-	 public static void main(String args[]){
-		 TriTree m = new TriTree(5);
-		 m.insert(4,m.root);
-		 m.insert(5,m.root);
-		 m.insert(7,m.root);
-		 m.insert(9,m.root);
-		 m.insert(2, m.root);
-		 m.insert(2, m.root);
-		 //print(m.root);
-		 m.delete(9,m.root);
-		 print(m.root);
-		 
-	 }
-	 public static boolean isLeaf(TriNode m){
-		 if(m == null){
-			 return true;
-		 }
-		 if(m.left == null &&m.mid == null && m.right == null){
-			 return true;
-		 }
-		 return false;
-	 }
-	 public static void print(TriNode m){
-		 if(m == null){
-			 return ;
-		 }
-		 System.out.print(m.data);
-		 print(m.left);
-		 print(m.mid);
-		 print(m.right);
-	 }
-		 
+class triTree {
+  int key;
+  triTree left;
+  triTree middle;
+  triTree right;
+ 
+  public triTree(int key) {
+    this.key = key;
+    this.left = this.middle = this.right = null;
+  }
+ 
+}
+ 
+ 
+class TrinaryTree {
+  triTree root;
+ 
+//Construct an empty TrinaryTree at first
+  public TrinaryTree() {
+    root = null;
+  }
+ 
+//...other less relevant functions
+ 
+/*General method that inserts a key.  Starts by being called at a node, then travels down
+ *until it finds the right place to create a node with that key.
+ */
+  public triTree insert(key, node) {
+    if (node == null) {
+      node = new triTree(key);
+    } else if (key < node.key) {
+      node.left = insert(key, node.left);
+    } else if (key == node.key) {
+      node.middle = insert(key, node.middle) ;
+    } else {
+      node.right = insert(key, node.right);
+    }
+    return node;
+  }
+ 
+/*Helper function for deletion.  When you delete a key with children,
+ *you want to make sure that it's replaced with either itself or its successor,
+ *which is the minimum of the right subtree.
+ */
+  public triTree findMin(node) {
+    if (node != null) {
+      while (node.left != null) {
+        return findMin(node.left);
+      }
+    } 
+    return node;
+  }
+ 
+/*General method that deletes a node.  Starts at a node, then travels down until it replaces
+ *a node with either itself (the middle child), its successor (the minimum of the right
+ *subtree, or its left child (which can be null), in that order.
+ */
+  public triTree delete(key, node) {
+    if (node == null) {
+      throw new RuntimeException();
+    } else if (key < node.key) {
+      node.left = delete(key, node.left);
+    } else if (key > node.key) {
+      node.right = delete(key, node.right);
+    } else {
+      if (node.middle != null) {
+        node.middle = delete(key, node.middle);
+      } else if (node.right != null) {
+        node.key = findMin(node.right).key;
+        node.right = delete(findMin(node.right).key, node.right);
+      } else {
+        node = node.left;
+      }
+    }
+    return node;
+  }  
+  public static void main(String args[]){
+	  triTree root = new triTree(5);
+	  root.insert(4,root);
+	  root.insert(5,root);
+	  root.insert(9,root);
+	  root.insert(2,root);
+	  root.insert(2,root);
+	  root.insert(7,root);
+	  System.out.print(root.key);
+	  
+  }
+    
 }
