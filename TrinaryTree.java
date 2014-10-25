@@ -1,120 +1,120 @@
-//this is the constructor of the triTree ,it is the node of the the Trinary Tree
-class triTree {
-	int key;
-	triTree left;
-	triTree middle;
-	triTree right;
+/**
+ * This is the class of TriaryTree,it contains two method ,one is insert and the other is
+ * delete.The structure of it is that there are  three child nodes for each parent
+ * with the left node being values less than the parent, the right node
+ * values greater than the parent, and the middle nodes values equal to the parent.
+ *
+ * @author Yawen Yu
+ * @Time 10/24/2014
+ *
+ */
 
-	public triTree(int key) {
-		this.key = key;
-		this.left = this.middle = this.right = null;
+public class TrinaryTree{
+	TreeNode root;
+	TrinaryTree(){
+		this.root = null;
 	}
-
-	public triTree(int val, triTree left, triTree mid, triTree right) {
-		this.key = val;
-		this.left = left;
-		this.middle = mid;
-		this.right = right;
-	}
-
-}
-
-class TrinaryTree {
-	triTree root;
-
-	public TrinaryTree() {
-		root = null;
-	}
-
-	// here implement the insert method
-	private static triTree insert(int value, triTree root) {
-		if (value < root.key) {
-			if (root.left != null)
-				insert(value, root.left);
-			else
-				root.left = new triTree(value);
-		} else if (value > root.key) {
-			if (root.right != null)
-				insert(value, root.right);
-			else
-				root.right = new triTree(value);
-		} else {
-			if (root.middle != null)
-				insert(value, root.middle);
-			else
-				root.middle = new triTree(value);
-		}
-		return root;
-	}
-
-	// here implement the delete function
-	public static triTree delete(int key, triTree node) {
-		if (node == null) {
-			System.out.print("the number is not in the tree");
-		} else if (key < node.key) {
-			node.left = delete(key, node.left);
-		} else if (key > node.key) {
-			node.right = delete(key, node.right);
-		} else {
-			if (node.middle != null) {
-				node.middle = node.middle.middle;
-			} else if (node.right == null) {
-				// if not have middle, not have right, use root.left.
-				node = node.left;
-			} else if (node.right.left == null) {
-				// if not have middle, have right, but right not have left. move
-				// root.right up.
-				node.right.left = node.left;
-				node = node.right;
-			} else {
-				// if not have middle, have right, and right have left, find the
-				// smallest in right,
-				triTree parent = node.right;
-				while (parent.left != null && parent.left.left != null) {
-					parent = parent.left;
+    
+	/**
+	 * insert a node which the value of it is key;
+	 * @param int key
+	 * @return void
+	 */
+	void insert(int key){
+		TreeNode newNode = new TreeNode(key);
+		if(this.root==null)
+			this.root = newNode;
+		else{
+			TreeNode parent = null;
+			TreeNode curnode = this.root;
+			while(curnode != null){
+				parent = curnode;
+				if(curnode.key < key){
+					curnode = curnode.right;
+				}else if(curnode.key == key){
+					curnode = curnode.mid;
+				}else{
+					curnode = curnode.left;
 				}
-				triTree newRoot = parent.left;
-				parent.left = newRoot.right;
-				newRoot.left = node.left;
-				newRoot.right = node.right;
-				node = newRoot;
+			}
+			if(parent.key < key){
+				parent.right = newNode;
+			}else if(parent.key == key){
+				parent.mid = newNode;
+			}else{
+				parent.left = newNode;
 			}
 		}
-		return node;
 	}
-
-	// this is the print function to check the final result
-	public static void print(triTree root) {
-		if (root == null) {
-			return;
+    
+	/**
+	 * Delete a node having the target keyue
+	 * @param key the key of the node to delete
+	 * @return true if succeed, false if fail
+	 */
+	boolean delete(int key){
+		if(this.root==null)
+			return false;
+		TreeNode cur = this.root, parent = null;
+		while(cur!=null){
+			if(cur.key > key){
+				parent = cur;
+				cur = cur.left;
+			}
+			else if(cur.key < key){
+				parent = cur;
+				cur = cur.right;
+			}
+			else
+				break;
 		}
-		System.out.println("the value of it is :" + root.key);
-
-		if (root.left != null) {
-			System.out.println("the left child of it is :" + root.left.key);
-			print(root.left);
+		if(cur==null)
+			return false;
+		
+		if(cur.mid!=null){
+			while(cur!=null){
+				if(cur.mid==null){
+					parent.mid=null;
+					return true;
+				}
+				parent = cur;
+				cur = cur.mid;
+			}
 		}
-		if (root.middle != null) {
-			System.out.println("the middle child of it is :" + root.middle.key);
-			print(root.middle);
+        
+		if(cur==root)
+			root = cur.right!=null ? cur.right : cur.left;
+		else{
+			if(parent.left==cur)
+				parent.left = cur.right!=null ? cur.right : cur.left;
+			else
+				parent.right = cur.right!=null ? cur.right : cur.left;
 		}
-		if (root.right != null) {
-			System.out.println("the right child of it is :" + root.right.key);
-			print(root.right);
-		}
+		if(cur.right!=null)
+			leftMost(cur.right).left = cur.left;
+		return true;
 	}
-
-	// main function of the whole program
-	public static void main(String args[]) {
-		triTree root = new triTree(5);
-		insert(4, root);
-		insert(5, root);
-		insert(9, root);
-		insert(2, root);
-		insert(2, root);
-		insert(7, root);
-		delete(9, root);
-		print(root);
+	
+	/**
+	 * Return the most left node
+	 * @param t is the TreeNode input
+	 * @return TreeNode reference
+	 */
+	TreeNode leftMost(TreeNode t){
+		while(t != null&& t.left!= null){
+			t= t.left;
+		}
+		return t;
 	}
+}
 
+class TreeNode {
+	int key;
+	TreeNode left, mid, right;
+	TreeNode(int i){
+		this.key = i;
+		this.left = null;
+		this.mid = null;
+		this.right = null;
+	}
 }
