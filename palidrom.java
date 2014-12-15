@@ -1,34 +1,30 @@
 
-public class Palidrom {
+public class palidrom {
 	public static void main(String args[]){
-		int m = 3;
-		int n = 7;
-		int p = 8;
-		System.out.print(checkPalindrom(m));
-		System.out.print(checkPalindrom(n));
-		System.out.print(checkPalindrom(p));
-
+		String m = "sdfasklm";
+		System.out.print(palidrom(m));
 	}
-	public static boolean checkPalindrom(int m){
-		if(m%2 == 0){
-			return false;
-		}
-		StringBuffer bu = new StringBuffer();
-		while(m != 0){
-			
-			bu.append(m&1);
-			m >>= 1;
-		}
-		String s = bu.toString();
-		int i = 0;
-		int j = s.length()-1;
-		while(i<=j){
-			if(s.charAt(i++)!= s.charAt(j--)){
-				return false;
+	public static int palidrom (String m) {
+		int size = m.length();
+		int[][] dp  = new int[size][size];
+		for(int i = 0; i < size-1; i++){
+			dp[i][i] = 0;
+			if(m.charAt(i) == m.charAt(i+1)){
+				dp[i][i+1] = 0;
+			}else{
+				dp[i][i+1] = 1;
 			}
 		}
 		
-
-		return true;
+		for(int i = 0; i < size;i++){
+			for(int j = i+1; j < size;++j){
+				if(m.charAt(i) == m.charAt(j)){
+					dp[i][j] = dp[i+1][j-1];
+				}else{
+					dp[i][j] = Math.min(dp[i+1][j],dp[i][j-1])+1;
+				}
+			}
+		}
+		return dp[0][size-1];
 	}
 }
